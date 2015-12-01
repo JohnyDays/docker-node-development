@@ -15,8 +15,8 @@ From your application folder run
 
 ```
  docker run -it --rm \
-  -v $(pwd)/package.json:/app/package.json
-  -v $(pwd)/source:/app/source
+  -v $(pwd)/package.json:/app/package.json \
+  -v $(pwd)/source:/app/source \
   johnydays/node-development
 ```
 
