@@ -17,6 +17,8 @@ commander
 
   .option('--no-babel', 'Do not run babel')
 
+  .option('--run-args <s>', 'Arguments to pass to your script')
+
   .parse(process.argv)
 
 const inherit = {stdio: 'inherit'}
@@ -29,7 +31,9 @@ const main_window = 'node-development:0'
 execSync('npm install', inherit)
 
 execSync('tmux split-window -p 10 "eye --*glob=package.json npm install"', inherit)
-execSync(`tmux send-keys -t ${main_window}.0 "nodemon" " ${commander.entryFile}" ENTER`, inherit)
+execSync(`tmux send-keys -t ${main_window}.0 \
+  "nodemon" " ${commander.entryFile}" \
+  " ${commander.runArgs}" ENTER`, inherit)
 
 if (commander.babel) {
   execSync(
