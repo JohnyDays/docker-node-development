@@ -26,7 +26,9 @@ execSync('tmux new -s node-development -d', inherit)
 
 const main_window = 'node-development:0'
 
-execSync('tmux split-window -p 10 "npm install; eye --*glob=package.json npm install"', inherit)
+execSync('npm install', inherit)
+
+execSync('tmux split-window -p 10 "eye --*glob=package.json npm install"', inherit)
 execSync(`tmux send-keys -t ${main_window}.0 "nodemon" " ${commander.entryFile}" ENTER`, inherit)
 
 if (commander.babel) {
