@@ -20,6 +20,8 @@ From your application folder run
   johnydays/node-development
 ```
 
+If you need more babel configuration just mount a .babelrc `-v ${pwd}/.babelrc:/app/.babelrc`
+
 This will start nodemon which will reload when you change one of you files, babel which will compile your files and eye which will install packages when you alter package.json
 
 And that's it, you can start editing your files and watch the app automatically reload
