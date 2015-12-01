@@ -1,0 +1,38 @@
+#! /usr/bin/node
+
+const commander = require('/usr/lib/node_modules/commander/index.js')
+const spawn = require('child_process').spawn
+const execSync = require('child_process').execSync
+
+const noop = value => value
+
+commander
+
+
+  .option('--babel-source-dir <s>', 'Folder in which source files are', noop, 'source')
+
+  .option('--babel-out-dir <s>', 'Folder into which source files are to be compiled', noop, 'build')
+
+  .option('--entry-file <s>', 'File to start app from', noop, 'build/index.js')
+
+  .option('--no-babel', 'Do not run babel')
+
+  .parse(process.argv)
+
+const inherit = {stdio: 'inherit'}
+
+execSync('tmux start-server', inherit)
+execSync('tmux new -s node-development -d', inherit)
+
+const main_window = 'node-development:0'
+
+execSync('tmux split-window -p 10 "npm install; eye --*glob=package.json npm install"', inherit)
+execSync(`tmux send-keys -t ${main_window}.0 "nodemon" " ${commander.entryFile}" ENTER`, inherit)
+
+if (commander.babel) {
+  execSync(
+    `tmux split-window -h \\
+      "babel -w --out-dir ${commander.babelOutDir} ${commander.babelSourceDir}"`, inherit)
+}
+
+execSync('tmux attach-session -t node-development', inherit)

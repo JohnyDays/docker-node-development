@@ -1,0 +1,9 @@
+#! /bin/sh
+
+docker build -t node-development:dev .
+docker run -it --rm \
+  --name node-development-dev \
+  -v $(pwd)/package.json:/app/package.json \
+  -v $(pwd)/index.js:/app/index.js \
+  -v $(pwd)/source:/app/source \
+  node-development:dev
