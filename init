@@ -8,7 +8,6 @@ const noop = value => value
 
 commander
 
-
   .option('--babel-source-dir <s>', 'Folder in which source files are', noop, 'source')
 
   .option('--babel-out-dir <s>', 'Folder into which source files are to be compiled', noop, 'build')
@@ -17,28 +16,41 @@ commander
 
   .option('--no-babel', 'Do not run babel')
 
+  .option('--no-watch', 'Compile once and exit')
+
   .option('--run-args <s>', 'Arguments to pass to your script')
 
   .parse(process.argv)
 
+const babelOutDir = commander.babelOutDir
+const babelSourceDir = commander.babelSourceDir
+const entryFile = commander.entryFile
+const babel = commander.babel
+const watch = commander.watch
+const runArgs = commander.runArgs
+
 const inherit = {stdio: 'inherit'}
 
-execSync('tmux start-server', inherit)
-execSync('tmux new -s node-development -d', inherit)
+if (watch) {
+  execSync('tmux start-server', inherit)
+  execSync('tmux new -s node-development -d', inherit)
 
-const main_window = 'node-development:0'
+  const main_window = 'node-development:0'
 
-execSync('npm install', inherit)
+  execSync('npm install', inherit)
 
-execSync('tmux split-window -p 10 "eye --*glob=package.json npm install"', inherit)
-execSync(`tmux send-keys -t ${main_window}.0 \
-  "nodemon" " ${commander.entryFile}" \
-  " ${commander.runArgs}" ENTER`, inherit)
+  execSync('tmux split-window -p 10 "eye --*glob=package.json npm install"', inherit)
+  execSync(`tmux send-keys -t ${main_window}.0 \
+    "nodemon" " ${entryFile}" \
+    " ${runArgs}" ENTER`, inherit)
 
-if (commander.babel) {
-  execSync(
-    `tmux split-window -h \\
-      "babel -w --out-dir ${commander.babelOutDir} ${commander.babelSourceDir}"`, inherit)
+    if (babel) {
+      execSync(
+        `tmux split-window -h \\
+        "babel -w --out-dir ${babelOutDir} ${babelSourceDir}"`, inherit)
+      }
+      execSync('tmux attach-session -t node-development', inherit)
 }
-
-execSync('tmux attach-session -t node-development', inherit)
+else {
+    execSync(`babel --out-dir ${babelOutDir} ${babelSourceDir}`, inherit)
+}
