@@ -7,4 +7,6 @@ RUN apk add --update tmux && \
 
 COPY init /init
 
+VOLUME /app/build
+
 ENTRYPOINT ["/init"]
